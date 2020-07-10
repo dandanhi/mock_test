@@ -11,6 +11,7 @@ using ::testing::_;
 class DataBaseConnect {
   public:
     virtual bool login(string username, string password) { return true; }
+    virtual bool login2(string username, string password) { return true; }
     virtual bool logout(string username) { return true; }
     virtual int fetchRecord() { return -1; }
 };
@@ -20,6 +21,7 @@ class MockDB : public DataBaseConnect {
     MOCK_METHOD0(fetchRecord, int ());
     MOCK_METHOD1(logout, bool (string username));
     MOCK_METHOD2(login, bool (string username, string password));
+    MOCK_METHOD2(login2, bool (string username, string password));
 };
 
 class MyDatabase {
@@ -29,8 +31,15 @@ class MyDatabase {
     MyDatabase(DataBaseConnect & _dbC) : dbC(_dbC) {}
 
     int Init(string username, string password) {
+      int rvalue = rand() % 2;
+      if (rvalue) {
+        return dbC.login2(username, password);
+      }
+
       if (!dbC.login(username, password)) {
-        cout << "DB FAILTURE" << endl; return -1;
+        if (!dbC.login(username, password)) {
+          cout << "DB FAILTURE 2nd TIME" << endl; return -1;
+        }
       }
 
       cout << "DB SUCCESS" << endl; return 1;
@@ -41,16 +50,33 @@ TEST(MyDBTest, LoginTest) {
   // Arrange
   MockDB mdb;
   MyDatabase db(mdb);
-  EXPECT_CALL(mdb, login(_, _))
-  .Times(AtLeast(1))
-  .WillOnce(Return(true));
+  ON_CALL(mdb, login(_, _))
+  .WillByDefault(Return(true));
+
+  ON_CALL(mdb, login2(_, _))
+  .WillByDefault(Return(true));
 
   // Act
-
   int retValue = db.Init("Terminator", "I'll Back");
 
   // ASSERT
   EXPECT_EQ(retValue, 1);
+};
+
+TEST(MyDBTest, LoginFailture) {
+  // Arrange
+  MockDB mdb;
+  MyDatabase db(mdb);
+  EXPECT_CALL(mdb, login(_, _))
+  .Times(2)
+  .WillOnce(Return(false))
+  .WillOnce(Return(false));
+
+  // Act
+  int retValue = db.Init("Terminator", "I'll Back");
+
+  // ASSERT
+  EXPECT_EQ(retValue, -1);
 };
 
 int main(int argc, char **argv) {
