@@ -41,13 +41,13 @@ TEST(MyDBTest, LoginTest) {
   // Arrange
   MockDB mdb;
   MyDatabase db(mdb);
-  EXPECT_CALL(mdb, login("Terminator", "I'm Back"))
+  EXPECT_CALL(mdb, login(_, _))
   .Times(AtLeast(1))
   .WillOnce(Return(true));
 
   // Act
 
-  int retValue = db.Init("Terminator", "I'm Back");
+  int retValue = db.Init("Terminator", "I'll Back");
 
   // ASSERT
   EXPECT_EQ(retValue, 1);
