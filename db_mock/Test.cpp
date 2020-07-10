@@ -42,7 +42,7 @@ TEST(MyDBTest, LoginTest) {
   MockDB mdb;
   MyDatabase db(mdb);
   EXPECT_CALL(mdb, login("Terminator", "I'm Back"))
-  .Times(1)
+  .Times(AtLeast(1))
   .WillOnce(Return(true));
 
   // Act
