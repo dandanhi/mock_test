@@ -10,14 +10,6 @@ using ::testing::_;
 
 class DataBaseConnect {
   public:
-    virtual bool login(string username, string password) { return true; }
-    virtual bool login2(string username, string password) { return true; }
-    virtual bool logout(string username) { return true; }
-    virtual int fetchRecord() { return -1; }
-};
-
-class MockDB : public DataBaseConnect {
-  public:
     MOCK_METHOD0(fetchRecord, int ());
     MOCK_METHOD1(logout, bool (string username));
     MOCK_METHOD2(login, bool (string username, string password));
@@ -48,7 +40,7 @@ class MyDatabase {
 
 TEST(MyDBTest, LoginTest) {
   // Arrange
-  MockDB mdb;
+  DataBaseConnect mdb;
   MyDatabase db(mdb);
   ON_CALL(mdb, login(_, _))
   .WillByDefault(Return(true));
@@ -65,7 +57,7 @@ TEST(MyDBTest, LoginTest) {
 
 TEST(MyDBTest, LoginFailture) {
   // Arrange
-  MockDB mdb;
+  DataBaseConnect mdb;
   MyDatabase db(mdb);
   EXPECT_CALL(mdb, login(_, _))
   .Times(2)
