@@ -1,0 +1,20 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: sungyong/gtest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: make
+      run: make db_mock
+    - name: execute
+      run: /code/db_mock/check
+
