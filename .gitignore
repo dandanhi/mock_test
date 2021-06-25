@@ -1,2 +1,7 @@
 db_mock/Test
 tcp_client/client
+parameter/coverage/
+*.o
+*.gcda
+*.gcno
+parameter/LeapYearParameterizedFixture
