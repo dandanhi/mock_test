@@ -5,3 +5,4 @@ parameter/coverage/
 *.gcda
 *.gcno
 parameter/LeapYearParameterizedFixture
+type/coverage/
